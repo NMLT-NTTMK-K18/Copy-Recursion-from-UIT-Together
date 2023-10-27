@@ -9,6 +9,7 @@ concurrency:
 
 env:
   GITHUB_TOKEN: ${{ secrets.USER_GITHUB_TOKEN }}
+  SOURCE_REPO_LINK: https://github.com/UIT-Together-2022-Team-Nobita/Recursion-CPP
   TARGET_REPO: ${{ vars.OWNER_REPO }}
   USERNAME: ${{ vars.ACTION_RUNNER_USERNAME }}
   EMAIL: ${{ vars.ACTION_RUNNER_EMAIL }}
@@ -31,7 +32,7 @@ jobs:
           token: ${{ env.GITHUB_TOKEN }}
 
       - name: Download UIT Together's Repo
-        run: git clone https://github.com/UIT-Together-2022-Team-Nobita/Recursion-CPP Recursion-UIT-Together
+        run: git clone --depth 1 ${{ env.SOURCE_REPO_LINK }} Recursion-UIT-Together
 
       - name: Set up User, move, add, commit and push
         run: |
@@ -70,7 +71,7 @@ jobs:
             echo "---"
             echo "Done commit Bai$i!"
             echo "---"
-            random_number=$((RANDOM % 61 + 20))
+            random_number=$((RANDOM % (500 - 200 + 1) + 200))
             echo "Sleeping for $random_number seconds..."
             sleep $random_number
             echo "End sleeping"
