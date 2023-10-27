@@ -1,0 +1,80 @@
+name: Copy Recursion from UIT Together
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.USER_GITHUB_TOKEN }}
+  TARGET_REPO: ${{ vars.OWNER_REPO }}
+  USERNAME: ${{ vars.ACTION_RUNNER_USERNAME }}
+  EMAIL: ${{ vars.ACTION_RUNNER_EMAIL }}
+  USER_COMMIT_MESSAGE: ${{ vars.USER_COMMIT_MESSAGE }}
+  USER_ORDER: ${{ vars.USER_ORDER }}
+  NUMBER_OF_MEMS: ${{ vars.NUMBER_OF_MEMS }}
+  NUMBER_OF_PROJECTS: ${{ vars.NUMBER_OF_PROJECTS }}
+
+permissions: write-all
+
+jobs:
+  copy:
+    name: Copy Recursion from UIT Together
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ env.GITHUB_TOKEN }}
+
+      - name: Download UIT Together's Repo
+        run: git clone https://github.com/UIT-Together-2022-Team-Nobita/Recursion-CPP Recursion-UIT-Together
+
+      - name: Set up User, move, add, commit and push
+        run: |
+          if [ -n "${{ env.EMAIL }}" ]; then
+            git config --global user.email ${{ env.EMAIL }}
+          else
+            exit 1
+          fi
+          if [ -n "${{ env.USERNAME }}" ]; then
+            git config --global user.name ${{ env.USERNAME }}
+          else
+            exit 1
+          fi
+          list_of_exercises_of_user=()
+          for ((num=${{ env.USER_ORDER }}; num<=${{ env.NUMBER_OF_PROJECTS }}; num=num+${{ env.NUMBER_OF_MEMS }})); do
+            list_of_exercises_of_user+=($(printf "%03d" "$num"))
+          done
+          echo "List of exercises of user ${{ env.USER_ORDER }}"
+          echo "${list_of_exercises_of_user[@]}"
+          echo "---"
+          for i in "${list_of_exercises_of_user[@]}"; do
+            folder_dir=$(find Recursion-UIT-Together -type d -name "[Bb]ai$i*" -print -quit)
+            if [ -z "${folder_dir}" ]; then
+              echo "Error: Directory Bai${i} not found."
+              continue
+            fi
+            file_dir=$(find $folder_dir -type f -name "[Bb]ai$i*.cpp" -print -quit)
+            if [ -z "${file_dir}" ]; then
+              echo "Error: File Bai${i} not found in directory ${folder_dir}."
+              continue
+            fi
+            echo "Moving $file_dir from $folder_dir"
+            mv -f $file_dir Bai$i/Source.cpp
+            git add Bai$i/Source.cpp
+            git commit -m "${{ env.USER_COMMIT_MESSAGE }}"
+            echo "---"
+            echo "Done commit Bai$i!"
+            echo "---"
+            random_number=$((RANDOM % 61 + 20))
+            echo "Sleeping for $random_number seconds..."
+            sleep $random_number
+            echo "End sleeping"
+            echo "---"
+          done
+          echo "Done commit all!"
+          git push origin main
