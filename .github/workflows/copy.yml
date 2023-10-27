@@ -35,6 +35,7 @@ jobs:
         run: git clone --depth 1 ${{ env.SOURCE_REPO_LINK }} Recursion-UIT-Together
 
       - name: Set up User, move, add, commit and push
+        continue-on-error: true
         run: |
           if [ -n "${{ env.EMAIL }}" ]; then
             git config --global user.email ${{ env.EMAIL }}
@@ -78,4 +79,8 @@ jobs:
             echo "---"
           done
           echo "Done commit all!"
+          rm -rf Recursion-UIT-Together
+          git pull
+          git add .
+          git commit -m "Merge from upstream"
           git push origin main
