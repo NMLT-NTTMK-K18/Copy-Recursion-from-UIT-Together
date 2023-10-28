@@ -84,6 +84,7 @@ jobs:
           git fetch
           if ! git status -uno | grep "Your branch is ahead of" >/dev/null 2>&1; then
             echo "Working tree is behind upstream so pull, add, commit and push"
+            git config pull.rebase true
             git pull origin main
             git commit -am "Merge from upstream"
             git push origin main
