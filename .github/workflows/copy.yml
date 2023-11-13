@@ -73,11 +73,11 @@ jobs:
             echo "---"
             echo "Done commit Bai$i!"
             echo "---"
-            # random_number=$((RANDOM % (500 - 200 + 1) + 200))
-            # echo "Sleeping for $random_number seconds..."
-            # sleep $random_number
-            # echo "End sleeping for $random_number ^^"
-            # echo "---"
+            random_number=$((RANDOM % (500 - 200 + 1) + 200))
+            echo "Sleeping for $random_number seconds..."
+            sleep $random_number
+            echo "End sleeping for $random_number ^^"
+            echo "---"
           done
           echo "Done commit all!"
           rm -rf Recursion-UIT-Together
