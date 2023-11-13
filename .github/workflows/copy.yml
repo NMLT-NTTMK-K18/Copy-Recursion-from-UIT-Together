@@ -13,11 +13,9 @@ on:
       USERNAME:
         description: Username of the action runner
         required: true
-        default: GitHub Action
       EMAIL:
         description: Email of the action runner
         required: true
-        default: action@github.com
       USER_COMMIT_MESSAGE:
         description: Commit message of the action runner
         required: true
@@ -33,6 +31,14 @@ on:
         description: Number of projects
         required: false
         default: "191"
+      MAX_RANDOM_TIME:
+        description: Max random time - Nên [1; 500]
+        required: true
+        default: "1"
+      MIN_RANDOM_TIME:
+        description: Min random time - nên min 0
+        required: true
+        default: "0"
 
 concurrency:
   group: ${{ github.workflow }}
@@ -48,6 +54,8 @@ env:
   USER_ORDER: ${{ inputs.USER_ORDER || vars.USER_ORDER }}
   NUMBER_OF_MEMS: ${{ inputs.NUMBER_OF_MEMS || vars.NUMBER_OF_MEMS }}
   NUMBER_OF_PROJECTS: ${{ inputs.NUMBER_OF_PROJECTS || vars.NUMBER_OF_PROJECTS }}
+  MAX_RANDOM_TIME: ${{ inputs.MAX_RANDOM_TIME || vars.MAX_RANDOM_TIME }}
+  MIN_RANDOM_TIME: ${{ inputs.MIN_RANDOM_TIME || vars.MIN_RANDOM_TIME }}
 
 permissions: write-all
 
@@ -104,7 +112,7 @@ jobs:
             echo "---"
             echo "Done commit Bai$i!"
             echo "---"
-            random_number=$((RANDOM % (500 - 200 + 1) + 200))
+            random_number=$((RANDOM % (${{ env.MAX_RANDOM_TIME }} - ${{ env.MIN_RANDOM_TIME }} + 1) + 200))
             echo "Sleeping for $random_number seconds..."
             sleep $random_number
             echo "End sleeping for $random_number ^^"
