@@ -67,7 +67,7 @@ jobs:
             fi
             echo "Moving $file_dir from $folder_dir"
             mv -f $file_dir Bai$i/Source.cpp
-            sed -i "s/*2252*//g" "Bai$i/Source.cpp"
+            sed -i "s/\*2252\*//g" "Bai$i/Source.cpp"
             git add Bai$i/Source.cpp
             git commit -m "${{ env.USER_COMMIT_MESSAGE }}"
             echo "---"
