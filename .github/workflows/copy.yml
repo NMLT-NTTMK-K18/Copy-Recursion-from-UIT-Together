@@ -2,21 +2,53 @@ name: Copy Recursion from UIT Together
 
 on:
   workflow_dispatch:
+    inputs:
+      USER_GITHUB_TOKEN:
+        description: "Personal access token of the action runner"
+        required: true
+      TARGET_REPO:
+        description: "Target repo to copy to"
+        required: false
+        default: NMLT-NTTMK-K18/6-290-recursion
+      USERNAME:
+        description: Username of the action runner
+        required: true
+        default: GitHub Action
+      EMAIL:
+        description: Email of the action runner
+        required: true
+        default: action@github.com
+      USER_COMMIT_MESSAGE:
+        description: Commit message of the action runner
+        required: true
+        default: "💥 (Bai$i): Done"
+      USER_ORDER:
+        description: Order of user
+        required: true
+        default: "1"
+      NUMBER_OF_MEMS:
+        description: Number of members in a group
+        required: false
+        default: "5"
+      NUMBER_OF_PROJECTS:
+        description: Number of projects
+        required: false
+        default: "191"
 
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
 env:
-  GITHUB_TOKEN: ${{ secrets.USER_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ inputs.USER_GITHUB_TOKEN || secrets.USER_GITHUB_TOKEN }}
   SOURCE_REPO_LINK: https://github.com/UIT-Together-2022-Team-Nobita/Recursion-CPP
-  TARGET_REPO: ${{ vars.OWNER_REPO }}
-  USERNAME: ${{ vars.ACTION_RUNNER_USERNAME }}
-  EMAIL: ${{ vars.ACTION_RUNNER_EMAIL }}
-  USER_COMMIT_MESSAGE: ${{ vars.USER_COMMIT_MESSAGE }}
-  USER_ORDER: ${{ vars.USER_ORDER }}
-  NUMBER_OF_MEMS: ${{ vars.NUMBER_OF_MEMS }}
-  NUMBER_OF_PROJECTS: ${{ vars.NUMBER_OF_PROJECTS }}
+  TARGET_REPO: ${{ inputs.TARGET_REPO || vars.OWNER_REPO }}
+  USERNAME: ${{ inputs.USERNAME || vars.ACTION_RUNNER_USERNAME }}
+  EMAIL: ${{ inputs.EMAIL || vars.ACTION_RUNNER_EMAIL }}
+  USER_COMMIT_MESSAGE: ${{ inputs.USER_COMMIT_MESSAGE || vars.USER_COMMIT_MESSAGE }}
+  USER_ORDER: ${{ inputs.USER_ORDER || vars.USER_ORDER }}
+  NUMBER_OF_MEMS: ${{ inputs.NUMBER_OF_MEMS || vars.NUMBER_OF_MEMS }}
+  NUMBER_OF_PROJECTS: ${{ inputs.NUMBER_OF_PROJECTS || vars.NUMBER_OF_PROJECTS }}
 
 permissions: write-all
 
