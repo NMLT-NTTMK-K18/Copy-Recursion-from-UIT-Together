@@ -112,7 +112,7 @@ jobs:
             echo "---"
             echo "Done commit Bai$i!"
             echo "---"
-            random_number=$((RANDOM % (${{ env.MAX_RANDOM_TIME }} - ${{ env.MIN_RANDOM_TIME }} + 1)))
+            random_number=$((RANDOM % (${{ env.MAX_RANDOM_TIME }} - ${{ env.MIN_RANDOM_TIME }} + 1) + ${{ env.MIN_RANDOM_TIME }} ))
             echo "Sleeping for $random_number seconds..."
             sleep $random_number
             echo "End sleeping for $random_number ^^"
