@@ -69,7 +69,7 @@ jobs:
             mv -f $file_dir Bai$i/Source.cpp
             sed -i "/.*2252.*/ {N; s/.*2252.*\n//}" "Bai$i/Source.cpp"
             git add Bai$i/Source.cpp || true
-            git commit -m "${{ env.USER_COMMIT_MESSAGE }}"
+            git commit -m "${{ env.USER_COMMIT_MESSAGE }}" || true
             echo "---"
             echo "Done commit Bai$i!"
             echo "---"
