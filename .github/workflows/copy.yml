@@ -25,7 +25,6 @@ on:
       USER_ORDER:
         description: Order of user
         required: true
-        default: "1"
       NUMBER_OF_MEMS:
         description: Number of members in a group
         required: false
