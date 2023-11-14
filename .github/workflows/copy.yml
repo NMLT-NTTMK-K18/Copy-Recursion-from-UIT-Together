@@ -4,32 +4,32 @@ on:
   workflow_dispatch:
     inputs:
       USER_GITHUB_TOKEN:
-        description: "Personal access token of the action runner"
+        description: Github access token
         required: true
       USERNAME:
-        description: Username of the action runner
+        description: Username của tài khoản github
         required: true
       EMAIL:
-        description: Email of the action runner
+        description: Email của tài khoản github
         required: true
       USER_COMMIT_MESSAGE:
-        description: Commit message of the action runner
+        description: Commit message - phải có $i
         required: true
         default: "💥 (Bai$i): Done"
       USER_ORDER:
-        description: Order of user
+        description: Thứ tự của ní
         required: true
       MAX_RANDOM_TIME:
-        description: Max random time - Nên [1; 500]
+        description: Max random time - [0; 500]
         required: true
-        default: "1"
+        default: "0"
       MIN_RANDOM_TIME:
-        description: Min random time - nên min 0
+        description: Min random time - [0; MAX]
         required: true
         default: "0"
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.actor }}
   cancel-in-progress: true
 
 env:
