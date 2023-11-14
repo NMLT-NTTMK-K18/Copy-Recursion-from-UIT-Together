@@ -1,1 +1,5 @@
-sed -i '/.*2252.*/ {N; s/.*2252.*\n//}' 'test.cpp'
+if [ $(wc -c <"./Source.cpp") -gt 100 ]; then
+	echo nice
+else
+	echo no
+fi

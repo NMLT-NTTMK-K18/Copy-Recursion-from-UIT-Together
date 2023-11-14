@@ -94,6 +94,10 @@ jobs:
           echo "${list_of_exercises_of_user[@]}"
           echo "---"
           for i in "${list_of_exercises_of_user[@]}"; do
+            if [ $(wc -c <"Bai$i/Source.cpp") -gt 100 ]; then
+              echo "File already done by user, no need to copy"
+              continue
+            fi
             folder_dir=$(find Recursion-UIT-Together -type d -name "[Bb]ai$i*" -print -quit)
             if [ -z "${folder_dir}" ]; then
               echo "Error: Directory Bai${i} not found."
