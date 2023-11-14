@@ -6,10 +6,6 @@ on:
       USER_GITHUB_TOKEN:
         description: "Personal access token of the action runner"
         required: true
-      TARGET_REPO:
-        description: "Target repo to copy to"
-        required: false
-        default: NMLT-NTTMK-K18/6-290-recursion
       USERNAME:
         description: Username of the action runner
         required: true
@@ -23,14 +19,6 @@ on:
       USER_ORDER:
         description: Order of user
         required: true
-      NUMBER_OF_MEMS:
-        description: Number of members in a group
-        required: false
-        default: "5"
-      NUMBER_OF_PROJECTS:
-        description: Number of projects
-        required: false
-        default: "191"
       MAX_RANDOM_TIME:
         description: Max random time - Nên [1; 500]
         required: true
@@ -47,15 +35,15 @@ concurrency:
 env:
   GITHUB_TOKEN: ${{ inputs.USER_GITHUB_TOKEN || secrets.USER_GITHUB_TOKEN }}
   SOURCE_REPO_LINK: https://github.com/UIT-Together-2022-Team-Nobita/Recursion-CPP
-  TARGET_REPO: ${{ inputs.TARGET_REPO || vars.OWNER_REPO }}
-  USERNAME: ${{ inputs.USERNAME || vars.ACTION_RUNNER_USERNAME }}
-  EMAIL: ${{ inputs.EMAIL || vars.ACTION_RUNNER_EMAIL }}
-  USER_COMMIT_MESSAGE: ${{ inputs.USER_COMMIT_MESSAGE || vars.USER_COMMIT_MESSAGE }}
-  USER_ORDER: ${{ inputs.USER_ORDER || vars.USER_ORDER }}
-  NUMBER_OF_MEMS: ${{ inputs.NUMBER_OF_MEMS || vars.NUMBER_OF_MEMS }}
-  NUMBER_OF_PROJECTS: ${{ inputs.NUMBER_OF_PROJECTS || vars.NUMBER_OF_PROJECTS }}
-  MAX_RANDOM_TIME: ${{ inputs.MAX_RANDOM_TIME || vars.MAX_RANDOM_TIME }}
-  MIN_RANDOM_TIME: ${{ inputs.MIN_RANDOM_TIME || vars.MIN_RANDOM_TIME }}
+  TARGET_REPO: ${{ vars.OWNER_REPO }}
+  USERNAME: ${{ inputs.USERNAME }}
+  EMAIL: ${{ inputs.EMAIL }}
+  USER_COMMIT_MESSAGE: ${{ inputs.USER_COMMIT_MESSAGE }}
+  USER_ORDER: ${{ inputs.USER_ORDER }}
+  NUMBER_OF_MEMS: 5
+  NUMBER_OF_PROJECTS: 191
+  MAX_RANDOM_TIME: ${{ inputs.MAX_RANDOM_TIME }}
+  MIN_RANDOM_TIME: ${{ inputs.MIN_RANDOM_TIME }}
 
 permissions: write-all
 
@@ -73,57 +61,16 @@ jobs:
       - name: Download UIT Together's Repo
         run: git clone --depth 1 ${{ env.SOURCE_REPO_LINK }} Recursion-UIT-Together
 
-      - name: Set up User, move, add, commit and push
+      - name: Run script to copy
         continue-on-error: true
         run: |
-          if [ -n "${{ env.EMAIL }}" ]; then
-            git config --global user.email ${{ env.EMAIL }}
-          else
-            exit 1
-          fi
-          if [ -n "${{ env.USERNAME }}" ]; then
-            git config --global user.name ${{ env.USERNAME }}
-          else
-            exit 1
-          fi
-          list_of_exercises_of_user=()
-          for ((num=${{ env.USER_ORDER }}; num<=${{ env.NUMBER_OF_PROJECTS }}; num=num+${{ env.NUMBER_OF_MEMS }})); do
-            list_of_exercises_of_user+=($(printf "%03d" "$num"))
-          done
-          echo "List of exercises of user ${{ env.USER_ORDER }}"
-          echo "${list_of_exercises_of_user[@]}"
-          echo "---"
-          for i in "${list_of_exercises_of_user[@]}"; do
-            if [ $(wc -c <"Bai$i/Source.cpp") -gt 100 ]; then
-              echo "File already done by user, no need to copy"
-              continue
-            fi
-            folder_dir=$(find Recursion-UIT-Together -type d -name "[Bb]ai$i*" -print -quit)
-            if [ -z "${folder_dir}" ]; then
-              echo "Error: Directory Bai${i} not found."
-              continue
-            fi
-            file_dir=$(find $folder_dir -type f -name "[Bb]ai$i*.cpp" -print -quit)
-            if [ -z "${file_dir}" ]; then
-              echo "Error: File Bai${i} not found in directory ${folder_dir}."
-              continue
-            fi
-            echo "Moving $file_dir from $folder_dir"
-            mv -f $file_dir Bai$i/Source.cpp
-            sed -i "/.*2252.*/ {N; s/.*2252.*\n//}" "Bai$i/Source.cpp"
-            git add Bai$i/Source.cpp || true
-            git commit -m "${{ env.USER_COMMIT_MESSAGE }}" || true
-            echo "---"
-            echo "Done commit Bai$i!"
-            echo "---"
-            random_number=$((RANDOM % (${{ env.MAX_RANDOM_TIME }} - ${{ env.MIN_RANDOM_TIME }} + 1) + ${{ env.MIN_RANDOM_TIME }} ))
-            echo "Sleeping for $random_number seconds..."
-            sleep $random_number
-            echo "End sleeping for $random_number ^^"
-            echo "---"
-          done
-          echo "Done commit all!"
-          rm -rf Recursion-UIT-Together
+          wget https://raw.githubusercontent.com/NMLT-NTTMK-K18/Utilities/main/Shell%20scripts/copyRecursionFromK17.sh
+          chmod +x copyRecursionFromK17.sh
+          ./copyRecursionFromK17.sh ${{ env.USERNAME}} ${{ env.EMAIL }} ${{ env.USER_COMMIT_MESSAGE }} ${{ env.USER_ORDER }} ${{ env.NUMBER_OF_MEMS }} ${{ env.NUMBER_OF_PROJECTS }} ${{ env.MAX_RANDOM_TIME }} ${{ env.MIN_RANDOM_TIME }}
+          rm -f copyRecursionFromK17.sh
+
+      - name: Push changes
+        run: |
           echo "Fetch repo"
           git fetch
           if ! git status -uno | grep "Your branch is ahead of" >/dev/null 2>&1; then
