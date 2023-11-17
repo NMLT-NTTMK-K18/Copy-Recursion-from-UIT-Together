@@ -62,11 +62,11 @@ jobs:
         run: git clone --depth 1 ${{ env.SOURCE_REPO_LINK }} Recursion-UIT-Together
 
       - name: Run script to copy
-        continue-on-error: true
+        continue-on-error: false
         run: |
           wget https://raw.githubusercontent.com/NMLT-NTTMK-K18/Utilities/main/Shell%20scripts/copyRecursionFromK17.sh
           chmod +x copyRecursionFromK17.sh
-          ./copyRecursionFromK17.sh ${{ env.USERNAME}} ${{ env.EMAIL }} ${{ env.USER_COMMIT_MESSAGE }} ${{ env.USER_ORDER }} ${{ env.NUMBER_OF_MEMS }} ${{ env.NUMBER_OF_PROJECTS }} ${{ env.MAX_RANDOM_TIME }} ${{ env.MIN_RANDOM_TIME }}
+          ./copyRecursionFromK17.sh "${{ env.USERNAME }}" "${{ env.EMAIL }}" "${{ env.USER_COMMIT_MESSAGE }}" "${{ env.USER_ORDER }}" "${{ env.NUMBER_OF_MEMS }}" "${{ env.NUMBER_OF_PROJECTS }}" "${{ env.MAX_RANDOM_TIME }}" "${{ env.MIN_RANDOM_TIME }}"
           rm -f copyRecursionFromK17.sh
 
       - name: Push changes
